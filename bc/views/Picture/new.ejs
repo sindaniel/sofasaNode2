@@ -1,0 +1,25 @@
+<form action="/picture/create" method="POST" class="form-signin" enctype="multipart/form-data">
+    <h2 class="form-signin-heading">Create an account</h2>
+
+
+    <div class="control-group">
+        <input type="file" class="form-control"  name="name1">
+    </div>
+
+    <div class="control-group">
+        <input type="text" class="form-control"  name="name2">
+    </div>
+
+
+    <div class="control-group">
+        <input type="text" class="form-control"  name="position1" value="1">
+        <input type="text" class="form-control"  name="position2" value="2">
+
+        <input type="text" class="form-control"  name="order" value="1">
+        <input type="text" class="form-control"  name="owner" value="1">
+    </div>
+
+
+    <input type="submit" class="btn btn-lg btn-primary btn-block" value="Create Account" />
+    <input type="hidden" name="_csrf" value="<%= _csrf %>" />
+</form>

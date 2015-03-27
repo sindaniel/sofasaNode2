@@ -1,0 +1,132 @@
+	<style>
+    body{
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+    }
+    html {
+    height: 100%
+}
+</style>
+	<div class="container">
+		<h1 ng-bind-html="position"></h1>
+	</div>
+
+	 <script type="text/javascript" src="/js/dependencies/sails.io.js"></script>
+
+
+  
+
+  <script type="text/javascript">
+  </script>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.27/angular.min.js"></script>
+ 
+ 
+  <script type="text/javascript">
+
+    var socketApp = angular.module('socketApp',[]);
+
+
+    socketApp.controller('UserController',['$http','$log','$scope','$sce',function($http,$log,$scope, $sce){
+
+
+      $scope.predicate = '-id';
+      $scope.reverse = false;
+      $scope.baseUrl = 'http://192.168.0.100:1337';
+      $scope.chatList =[];
+      $scope.getAllchat = function(){
+
+        //io.socket.get('/test');
+        //io.socket.get('/user/connectSocket/');
+
+        io.socket.get('/user/connectSocket/', function (resData) {
+		  //resData; // => {id:9, name: 'Timmy Mendez'}
+		   console.log("hola")
+		});
+
+
+               
+
+        $http.get($scope.baseUrl+'/user')
+           .success(function(success_data){
+              $scope.chatList = success_data;
+             // $log.info(success_data);
+           });
+        };
+
+      $scope.getAllchat();
+      $scope.chatUser = "0"
+      $scope.chatMessage="something";
+     
+
+  // io.socket.on('privateMessage',function(obj){
+  //       console.log("socket")
+
+  //       /*  $scope.chatList.push(obj.data);
+  //         $scope.$digest();*/
+  //     });
+
+
+
+
+
+      io.socket.on('slide', function onServerSentEvent (msg) {
+        
+
+          script = []
+
+          for (var key in msg) {
+             for(var key2 in msg[key]){
+             
+                 for (var i = 1; i <= msg[key][key2][0]['time']; i++) {                
+                     script.push(msg[key][key2][0]['picture'])
+                 };
+
+             }
+          }
+
+
+          flag = 1;
+          setInterval(function () {
+            console.log(flag)
+            console.log(script[flag])
+            document.body.style.backgroundImage = "url('http://192.168.10.134:3000/"+script[flag]+"')";
+
+            flag = flag+1
+          }, 1000);
+
+          
+
+
+    
+
+
+       
+
+        
+    
+
+      });
+
+       io.socket.on('setPosition', function onServerSentEvent (msg) {
+            console.log(msg)
+         	$scope.position = $sce.trustAsHtml(msg.position.toString()+"<br>"+msg.id.toString());
+       		$scope.$digest();
+
+       });
+
+
+
+
+      $scope.sendMsg = function(){
+        io.socket.post('/user/test',{ send: $scope.chatUser, message: $scope.chatMessage });
+        $scope.chatMessage = "";
+      };
+
+
+      $scope.getListSockets = function(){
+        io.socket.post('/user/listSockets',{});
+      };
+
+
+    }]);
+  </script>

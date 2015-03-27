@@ -1,0 +1,101 @@
+	<div class="container">
+		
+		<h1>Admin</h1>
+
+
+	</div>
+	<div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="form-group">
+          <input type="text" class="form-control" placeholder="Codigo del vehiculo" ng-model="codigo">
+        </div>
+      </div>
+      <div class="col-md-12">
+        <div class="form-group">
+          <button class="btn btn-default col-lg-2 col-md-2" ng-click="sendMsg()">Enviar</button>  
+        </div>
+      </div>
+    </div>
+		 
+
+<hr>
+
+		 <table  class="table">
+			<tr class="chat_message" ng-repeat="socket in sockets | limitTo: 15">
+				<td class="col-md-12 td_class">
+					<strong>{{socket.position}}</strong>	{{socket.id}}
+				</td>
+			</tr>
+		</table>
+ 
+
+	
+ 	
+
+	</div>
+
+
+ <script type="text/javascript" src="/js/dependencies/sails.io.js"></script>
+
+
+
+  <script type="text/javascript">
+  </script>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.27/angular.min.js"></script>
+ 
+ 
+  <script type="text/javascript">
+
+    var socketApp = angular.module('socketApp',[]);
+
+
+    socketApp.controller('UserController',['$http','$log','$scope',function($http,$log,$scope){
+
+    	 $scope.sockets =[];
+
+        //io.socket.get('/test');
+      //  io.socket.get('/user/connectSocket/');
+
+    $scope.sendMsg = function(){
+      
+      console.log($scope.codigo);
+      
+          if($scope.codigo == undefined){
+            console.log('error');
+            return false;
+          }else{
+            
+             $http.get('http://localhost:3000/consulta/'+$scope.codigo).
+                  success(function(data, status, headers, config) {
+                    $scope.codigo = ''
+                     io.socket.post('/user/SendMessage/',{data:data});
+                    // this callback will be called asynchronously
+                    // when the response is available
+                  }).
+                  error(function(data, status, headers, config) {
+                    // called asynchronously if an error occurs
+                    // or server returns response with an error status.
+                  });
+          }
+    };       
+
+
+
+
+   window.onload = function subscribeAndListen(){
+    // When the document loads, send a request to users.testSocket
+    // The controller code will subscribe you to the model 'users'
+    io.socket.get('/user/connectSocket/');
+
+    // Listen for the event called 'user' emited by the publishCreate() method.
+    io.socket.on('user',function(obj){
+      console.log(obj);
+       $scope.sockets = obj.data;
+       $scope.$digest();
+    });
+};
+
+
+    }]);
+  </script>
