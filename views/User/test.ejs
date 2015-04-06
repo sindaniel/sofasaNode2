@@ -1,6 +1,7 @@
-	<style>
+  <style>
     body{
-      background-size: 100% 100%;
+      background-size: auto   100%;
+      background-position: center top;
       background-repeat: no-repeat;
     }
     html {
@@ -12,24 +13,37 @@
   margin: 40px auto;
   background: white;
 }
-
+#cuenta {
+  position: absolute;
+font-size: 30px;
+color: #FFF;
+text-shadow: 1px 1px 2px #000;
+right: 10px;
+bottom: 10px;
+}
+#fin{
+  text-align: center;
+  font-size: 30px;
+  margin-top:30px; 
+}
 </style>
-	<div class="container">
-		<h1 ng-bind-html="position"></h1>
-	</div>
+  <div class="container">
+    <h1 ng-bind-html="position"></h1>
+  </div>
 
-	 <script type="text/javascript" src="/js/dependencies/sails.io.js"></script>
-<div class="wrapper">
-  <div class="pie spinner"></div>
-  <div class="pie filler"></div>
-  <div class="mask"></div>
-</div>
+  <div id="fin" ng-bind-html="fin">
+
+  </div>
+
+  <strong ng-bind-html="cuenta" id="cuenta">1</strong>
+
+   <script type="text/javascript" src="/js/dependencies/sails.io.js"></script>
+
 
   
 
-  <script type="text/javascript">
-  </script>
-  <script type="text/javascript" src="/js/angular.js"></script>
+
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.27/angular.min.js"></script>
  
  
   <script type="text/javascript">
@@ -41,6 +55,7 @@
 
 
       $scope.predicate = '-id';
+       
       $scope.reverse = false;
       $scope.baseUrl = 'http://192.168.0.100:1337';
       $scope.chatList =[];
@@ -50,9 +65,8 @@
         //io.socket.get('/user/connectSocket/');
 
         io.socket.get('/user/connectSocket/', function (resData) {
-		  //resData; // => {id:9, name: 'Timmy Mendez'}
-		   console.log("hola")
-		});
+    
+    });
 
 
                
@@ -68,20 +82,21 @@
       $scope.chatUser = "0"
       $scope.chatMessage="something";
      
-
-  // io.socket.on('privateMessage',function(obj){
-  //       console.log("socket")
-
-  //       /*  $scope.chatList.push(obj.data);
-  //         $scope.$digest();*/
-  //     });
-
-
-
-
+      var refreshIntervalId;  
 
       io.socket.on('slide', function onServerSentEvent (msg) {
+           
+          $scope.position = $sce.trustAsHtml("");
+         
+          $scope.fin = $sce.trustAsHtml("");
+              $scope.$digest();  
+
+        for(var i= 1; i< 99999; i++ ){
+          window.clearInterval(refreshIntervalId)
+        }            
         
+
+
 
           script = []
 
@@ -97,12 +112,32 @@
 
 
           flag = 1;
-          setInterval(function () {
-            console.log(flag)
+           refreshIntervalId = setInterval(function () {
             console.log(script[flag])
-            document.body.style.backgroundImage = "url('http://192.168.0.101:3000/"+script[flag]+"')";
-
             flag = flag+1
+            if(script[flag] != undefined){
+              console.log(Date())
+              document.body.style.backgroundImage = "url('http://localhost:3000/"+script[flag]+"')";
+
+              $scope.cuenta = $sce.trustAsHtml(flag.toString());
+              $scope.$digest();
+
+
+            
+          }else{
+
+
+               for(var i= 1; i< 99999; i++ ){
+                  window.clearInterval(refreshIntervalId)
+                } 
+
+              $scope.fin = $sce.trustAsHtml("Termino");
+              $scope.$digest();  
+              document.body.style.backgroundImage = "url()";
+
+
+          }
+            
           }, 1000);
 
           
@@ -120,8 +155,8 @@
 
        io.socket.on('setPosition', function onServerSentEvent (msg) {
             console.log(msg)
-         	$scope.position = $sce.trustAsHtml(msg.position.toString()+"<br>"+msg.id.toString());
-       		$scope.$digest();
+          $scope.position = $sce.trustAsHtml(msg.position.toString());
+          $scope.$digest();
 
        });
 

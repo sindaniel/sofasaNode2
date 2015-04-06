@@ -149,16 +149,21 @@ module.exports = {
       
   var data = req.param('data');
   
-  console.log(data)
-
+ 
 
 
 
         User.findOne(1).exec(function(e,userOne){
               var subscribers = User.subscribers(userOne);
+
+              
+
              
               var flag = 0
                _.each(subscribers, function(subscriber) {
+
+                 console.log("sockets list")
+               console.log(subscriber.id)
                   
                   sails.sockets.emit(subscriber.id, 'slide', {data:data[flag]});
                   flag= flag+1;
