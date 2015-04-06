@@ -8,7 +8,17 @@
     <div class="row">
       <div class="col-md-12">
         <div class="form-group">
-          <input type="text" class="form-control" placeholder="Codigo del vehiculo" ng-model="codigo">
+         <!--  <input type="text" class="form-control" id="ide" placeholder="Codigo del vehiculo" ng-model="codigo" ng-paste='handlePaste(e)'> -->
+
+          <textarea rows="1"
+           class="form-control"
+          placeholder="Codigo del vehiculo"
+          ng-init="content = null"
+          ng-model="content" 
+          ng-paste="paste($event.originalEvent)">
+</textarea>
+
+
         </div>
       </div>
       <div class="col-md-12">
@@ -35,27 +45,46 @@
 
 	</div>
 
-
+<script data-require="jquery@*" data-semver="2.1.1" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
  <script type="text/javascript" src="/js/dependencies/sails.io.js"></script>
 
 
 
-  <script type="text/javascript">
-  </script>
-  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.27/angular.min.js"></script>
- 
+  <script type="text/javascript" src="/js/angular.js"></script>
+  
+   
  
   <script type="text/javascript">
 
     var socketApp = angular.module('socketApp',[]);
 
 
-    socketApp.controller('UserController',['$http','$log','$scope',function($http,$log,$scope){
+    socketApp.controller('UserController',['$http','$log','$scope', '$timeout',function($http,$log,$scope){
 
     	 $scope.sockets =[];
 
         //io.socket.get('/test');
       //  io.socket.get('/user/connectSocket/');
+$scope.paste = function (event) {
+    var item = event.clipboardData.items[0];
+    item.getAsString(function (data) {
+      $scope.pastedData = data;
+      
+       $http.get('http://localhost:3000/consulta/'+data).
+                  success(function(data, status, headers, config) {
+                    $scope.content = ' '
+                     io.socket.post('/user/SendMessage/',{data:data});
+                    // this callback will be called asynchronously
+                    // when the response is available
+                  }).
+                  error(function(data, status, headers, config) {
+                    // called asynchronously if an error occurs
+                    // or server returns response with an error status.
+                  });
+
+    });
+  };
+
 
     $scope.sendMsg = function(){
       
@@ -79,6 +108,21 @@
                   });
           }
     };       
+
+
+
+// $scope.handlePaste = function(event) {
+// $scope.$digest();
+//         console.log($scope.pastedValue);
+  
+// }
+
+
+
+
+    $scope.beforeParse=function(data){ console.log('ho')}
+   
+
 
 
 

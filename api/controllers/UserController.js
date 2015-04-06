@@ -8,6 +8,10 @@
 module.exports = {
   admin: function(req, res, next){
     res.view();
+
+    
+     User.findOne(1).exec(function(e,userOne){
+       });   
   },
   connectSocket: function(req, res, next){
 
@@ -19,6 +23,8 @@ module.exports = {
 
 
             User.findOne(1).exec(function(e,userOne){
+              console.log("aqui-----");
+              console.log(userOne);
               var subscribers = User.subscribers(userOne);
               var listSockets =[];
               var flag = 0
